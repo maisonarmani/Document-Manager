@@ -23,8 +23,8 @@ frappe.ready(function () {
                                 lis += "<li class='struct' tabindex='1'> <a href='"+v.old_parent+"/"+v.file_name
                                     +"' class='_'></a><span>" + v.file_name + "</span></li>"
                             }else{
-                                lis += "<li class='struct-file'><span class='icon'></span>" + v.file_name
-                                    + " <a href='"+v.file_url+"' class='preview'> </a></li> "
+                                lis += "<li class='struct-file' tabindex='1'><span class='icon'></span>" + v.file_name
+                                    + " <a href='"+v.file_url+"' class='preview'> download</a></li> "
                             }
                         });
                         var struc_item = `<ul class="struct-items">${lis}</ul>`;

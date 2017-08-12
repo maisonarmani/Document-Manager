@@ -13,23 +13,10 @@ class Client(Document):
     # When a new client is created,  we need to create a new folder in the manager
     # Then we create a new user_role and admin_role
     # Admin can then assign new roles to all users
-    def on_save(self):
-        pass
 
     def validate(self):
         pass
 
-    def autoname(self):
-        pass
-
-    def before_save(self):
-        frappe.errprint(self.name)
-
-    def after_save(self):
-        frappe.errprint(self.name)
-
-    def before_insert(self):
-        frappe.errprint("before insert")
 
     def after_insert(self):
         # we the add the file manager for the client and do some
@@ -41,76 +28,87 @@ class Client(Document):
         client_admin_role = "{0} - Admin".format(client_name)
         client_user_role = "{0} - User".format(client_name)
 
-        # Client Structure Predefined
-        client_structure = {
-            client_name: {
-                "Awards Papers": ["MVC", "Polo"],
-                "Certificates": "Certificates",
-                "Demo Files": "Demo Files",
-                "Credentials": "Credentials",
-                "Licenses": "Licenses",
-            }
-        }
+        if self.create_new_structure == 1:
+            # Client Structure Predefined
+            if self.use_default:
+                client_structure = get_structure(client=client_name, is_default=1)
+            else :
+                if self.folder_structure:
+                    client_structure = get_structure(structure=self.folder_structure,client=client_name, is_default=1)
+                    pass
 
-        for (key, client) in client_structure.items():
-            if parent is "":
-                parent = _p = "{0}".format(root)
-                folders.append({"parent": parent, "folder_name": key})
-            if isinstance(client, dict):
-                for (k, v) in client.items():
-                    role = "{0} - {1} - User".format(client_name, k)
-                    parent = "{0}/{1}".format(_p, key)
-                    folders.append({"parent": parent, "folder_name": k, "role": role})
-                    if role not in client_user_roles:
-                        client_user_roles.append(role)
-                    if isinstance(v, list):
-                        for i in v:
-                            folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i, "role": role})
+            for (key, client) in client_structure.items():
+                if parent is "":
+                    parent = _p = "{0}".format(root)
+                    folders.append({"parent": parent, "folder_name": key})
+                if isinstance(client, dict):
+                    for (k, v) in client.items():
+                        role = "{0} - {1} - User".format(client_name, k)
+                        parent = "{0}/{1}".format(_p, key)
+                        folders.append({"parent": parent, "folder_name": k, "role": role})
+                        if role not in client_user_roles:
+                            client_user_roles.append(role)
+                        if isinstance(v, list):
+                            for i in v:
+                                folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i, "role": role})
 
-        if folders:
-            create_new_role(client_user_role)
-            create_new_role(client_admin_role)
-            for role in client_user_roles:
-                create_new_role(role)
+            if folders:
+                create_new_role(client_user_role)
+                create_new_role(client_admin_role)
+                for role in client_user_roles:
+                    create_new_role(role)
 
-        for indx, folder in enumerate(folders):
-            # create user and pass admin
-            if not folder.get('parent') == root:
-                c = folder.get('role')
+            for folder in folders:
+                # create user and pass admin
+                if not folder.get('parent') == root:
+                    c = folder.get('role')
+                else:
+                    c = client_user_role
+
+                create_new_folder(folder.get('folder_name'), folder.get('parent'), c, client_admin_role)
+
+
+
+
+def get_structure(structure = None, client = None, is_default = False):
+    default = 0
+    if is_default:
+        default  = True
+    def get_children(structure, parent):
+        if default:
+            if parent != "root":
+                ls = frappe.db.sql("select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
+                                   "where (fsi.parent = fs.name) and (fs.name = '{structure}')  and fsi.parent_folder="
+                                   "'{parent}' and fs.is_default=0".format(structure=structure, parent=parent), as_list=1)
             else:
-                c = client_user_role
+                ls = frappe.db.sql("select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
+                                   "where (fsi.parent = fs.name) and (fs.name = '{structure}')  and fsi.is_root=1 and fs.is_default=0"
+                                   .format(structure=structure), as_list=1)
+        else:
+            if parent != "root":
+                ls = frappe.db.sql(
+                    "select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
+                    "where (fsi.parent = fs.name) and fsi.parent_folder='{parent}' and fs.is_default=1"
+                    .format(parent=parent), as_list=1)
 
-            create_new_folder(folder.get('folder_name'), folder.get('parent'), c, client_admin_role)
+            else:
+                ls = frappe.db.sql(
+                    "select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
+                    "where (fsi.parent = fs.name) and fsi.is_root=1 and fs.is_default=1", as_list=1)
 
-    def before_submit(self):
-        frappe.errprint("before submit")
+        return [x[0] for x in ls]
 
-    def before_cancel(self):
-        pass
+    ls = {}
+    for v in get_children(structure, "root"):
+        _ = get_children(structure, v)
+        if _ == []:
+            x = v
+        else:
+            x = _
+        ls.update({ v: x })
 
-    def before_update_after_submit(self):
-        pass
-
-    def on_update(self):
-        pass
-
-    def on_submit(self):
-        pass
-
-    def on_cancel(self):
-        pass
-
-    def on_update_after_submit(self):
-        pass
-
-    def on_change(self):
-        pass
-
-    def on_trash(self):
-        pass
-
-    def after_delete(self):
-        pass
+    print  { client : ls}
+    return { client : ls}
 
 
 def create_new_folder(file_name, folder, user, admin):
