@@ -9,10 +9,12 @@ from frappe.model.document import Document
 
 class FolderStructure(Document):
     def validate(self):
+
         if self.is_default == 1:
             ls = frappe.db.sql("select name from `tabFolder Structure` where is_default = 1", as_dict=1)
-            if ls != [] and ls[0].name != self.name:
-                frappe.throw("Sorry. Only one default folder structure can exist.")
+            if ls != []:
+                if ls[0].get('name') != self.name:
+                    frappe.throw("Sorry. Only one default folder structure can exist.")
 
 
 @frappe.whitelist()
