@@ -30,12 +30,11 @@ class Client(Document):
 
         if self.create_new_structure == 1:
             # Client Structure Predefined
-            if self.use_default:
+            if self.use_default == 1:
                 client_structure = get_structure(client=client_name, is_default=1)
             else :
                 if self.folder_structure:
-                    client_structure = get_structure(structure=self.folder_structure,client=client_name, is_default=1)
-                    pass
+                    client_structure = get_structure(structure=self.folder_structure,client=client_name)
 
             for (key, client) in client_structure.items():
                 if parent is "":
@@ -72,10 +71,10 @@ class Client(Document):
 
 def get_structure(structure = None, client = None, is_default = False):
     default = 0
-    if is_default:
-        default  = True
+    if is_default == 1:
+        default  = 1
     def get_children(structure, parent):
-        if default:
+        if not default :
             if parent != "root":
                 ls = frappe.db.sql("select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
                                    "where (fsi.parent = fs.name) and (fs.name = '{structure}')  and fsi.parent_folder="
