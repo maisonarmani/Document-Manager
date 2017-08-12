@@ -11,7 +11,7 @@ class FolderStructure(Document):
     def validate(self):
         if self.is_default == 1:
             ls = frappe.db.sql("select name from `tabFolder Structure` where is_default = 1", as_dict=1)
-            if ls != {} and ls[0].name != self.name:
+            if ls != [] and ls[0].name != self.name:
                 frappe.throw("Sorry. Only one default folder structure can exist.")
 
 
