@@ -10,5 +10,14 @@ def get_data():
 			"icon": "octicon octicon-file-directory",
 			"type": "module",
 			"label": _("Document Manager")
-		}
+		},
+		{
+			"module_name": "Client",
+			"color": "#8d62b6",
+			"icon": "octicon octicon-organization",
+			"label": _("Client"),
+			"link": "List/Client",
+			"_doctype": "Client",
+			"type": "list"
+		},
 	]

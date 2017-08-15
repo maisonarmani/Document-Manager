@@ -49,6 +49,7 @@ class Client(Document):
                             client_user_roles.append(role)
                         if isinstance(v, list):
                             for i in v:
+                                role = "{0} - {1} - {2} - User".format(client_name, k, i)
                                 folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i, "role": role})
 
             if folders:
