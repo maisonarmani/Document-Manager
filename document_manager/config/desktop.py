@@ -13,8 +13,8 @@ def get_data():
 		},
 		{
 			"module_name": "Client",
-			"color": "#8d62b6",
-			"icon": "octicon octicon-organization",
+			"color": "#f5ebff",
+			"icon": "octicon octicon-briefcase",
 			"label": _("Client"),
 			"link": "List/Client",
 			"_doctype": "Client",
