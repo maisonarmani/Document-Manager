@@ -90,7 +90,8 @@ standard_portal_menu_items = [
 # Hook on document methods and events
 
 doc_events = {
-    "*": {
+    "File": {
+        "before_save":"document_manager.misc.doctype.client.client.append_permission",
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",

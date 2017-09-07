@@ -42,15 +42,15 @@ class Client(Document):
                     folders.append({"parent": parent, "folder_name": key})
                 if isinstance(client, dict):
                     for (k, v) in client.items():
-                        role = "{0} - {1} - User".format(client_name, k)
+                        #role = "{0} - {1} - User".format(client_name, k)
                         parent = "{0}/{1}".format(_p, key)
-                        folders.append({"parent": parent, "folder_name": k, "role": role})
-                        if role not in client_user_roles:
-                            client_user_roles.append(role)
+                        folders.append({"parent": parent, "folder_name": k, "role": client_user_role})
+                        #if role not in client_user_roles:
+                         #   client_user_roles.append(role)
                         if isinstance(v, list):
                             for i in v:
-                                role = "{0} - {1} - {2} - User".format(client_name, k, i)
-                                folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i, "role": role})
+                                #role = "{0} - {1} - {2} - User".format(client_name, k, i)
+                                folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i, "role": client_user_role})
 
             if folders:
                 create_new_role(client_user_role)
@@ -68,12 +68,9 @@ class Client(Document):
                 create_new_folder(folder.get('folder_name'), folder.get('parent'), c, client_admin_role)
 
 
-
-
 def get_structure(structure = None, client = None, is_default = False):
     default = 0
-    if is_default == 1:
-        default  = 1
+    if is_default == 1: default  = 1
     def get_children(structure, parent):
         if not default :
             if parent != "root":
@@ -85,12 +82,18 @@ def get_structure(structure = None, client = None, is_default = False):
                                    "where (fsi.parent = fs.name) and (fs.name = '{structure}')  and fsi.is_root=1 and fs.is_default=0"
                                    .format(structure=structure), as_list=1)
         else:
+            # check if there's a default set
+            check  = frappe.db.sql(
+                "select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi where fs.is_default=1"
+                    ,as_list=1)
+            if check == []:
+                frappe.throw("Sorry, No default folder structure set")
+
             if parent != "root":
                 ls = frappe.db.sql(
                     "select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
                     "where (fsi.parent = fs.name) and fsi.parent_folder='{parent}' and fs.is_default=1"
                     .format(parent=parent), as_list=1)
-
             else:
                 ls = frappe.db.sql(
                     "select fsi.child from `tabFolder Structure` fs inner join `tabFolder Structure Item` fsi "
@@ -107,7 +110,6 @@ def get_structure(structure = None, client = None, is_default = False):
             x = _
         ls.update({ v: x })
 
-    print  { client : ls}
     return { client : ls}
 
 
@@ -138,3 +140,12 @@ def get_permission_query_conditions_for_file(user):
     elif "File User" in frappe.get_roles(user):
         return """(tabFile.owner = '{user}') or ((tabFile.is_folder = 0) and tabFile.folder in ({roled})) or
         (tabFile.name in ({roled}))""".format(user=frappe.db.escape(user), roled=roled.format(roles=roles))
+
+
+@frappe.whitelist()
+def append_permission(doc,trigger):
+    name = str(doc.name)
+    if str.index(name, "/") > -1:
+        base = str.split(name, "/")[1]
+        doc.file_user = base+" - User"
+        doc.file_admin = base+" - Admin"
