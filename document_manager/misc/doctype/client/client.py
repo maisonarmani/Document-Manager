@@ -144,8 +144,11 @@ def get_permission_query_conditions_for_file(user):
 
 @frappe.whitelist()
 def append_permission(doc,trigger):
-    name = str(doc.name)
-    if str.index(name, "/") > -1:
-        base = str.split(name, "/")[1]
-        doc.file_user = base+" - User"
-        doc.file_admin = base+" - Admin"
+    try:
+        name = str(doc.name)
+        if str.index(name, "/") > -1:
+            base = str.split(name, "/")[1]
+            doc.file_user = base+" - User"
+            doc.file_admin = base+" - Admin"
+    except UnicodeEncodeError:
+        pass
