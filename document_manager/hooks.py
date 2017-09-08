@@ -71,7 +71,7 @@ website_generators = ["File"]
 
 
 permission_query_conditions = {
- 	"File": "document_manager.misc.doctype.client.client.get_permission_query_conditions_for_file",
+ 	"File": "document_manager.document_manager.doctype.client.client.get_permission_query_conditions_for_file",
 }
 
 standard_portal_menu_items = [
@@ -91,7 +91,7 @@ standard_portal_menu_items = [
 
 doc_events = {
     "File": {
-        "before_save":"document_manager.misc.doctype.client.client.append_permission",
+        "before_save":"document_manager.document_manager.doctype.client.client.append_permission",
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",

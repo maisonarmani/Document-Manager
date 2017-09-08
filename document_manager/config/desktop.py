@@ -9,11 +9,12 @@ def get_data():
 			"color": "grey",
 			"icon": "octicon octicon-file-directory",
 			"type": "module",
-			"label": _("Document Manager")
+			"label": _("Document Manager"),
+			"force_show":1
 		},
 		{
 			"module_name": "Client",
-			"color": "#f5ebff",
+			"color": "rgb(51, 34, 68)",
 			"icon": "octicon octicon-briefcase",
 			"label": _("Client"),
 			"link": "List/Client",
