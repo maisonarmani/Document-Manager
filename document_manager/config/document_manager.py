@@ -15,7 +15,7 @@ def get_data():
                 {
                     "type": "doctype",
                     "name": "File",
-                    "label":"Folder",
+                    "label":"Client Documents",
                     "description": _("Client Documents")
                 },
             ]
