@@ -16,12 +16,6 @@ class FolderStructure(Document):
 				if ls[0].get('name') != self.name:
 					frappe.throw("Sorry. Only one default folder structure can exist.")
 @frappe.whitelist()
-def file_permission(doc, method):
-    frappe.message(method)
-	folder = frappe.get_doc("File",doc.folder)
-	if folder.customer_folder==1 :
-	   frappe.db.sql("""update `tabFile` set owner="{}" where name = "{}" """.format(folder.owner,doc.name),as_dict=1)
-@frappe.whitelist()
 def get_children():
 	args = frappe.local.form_dict
 	if args.get("type"):

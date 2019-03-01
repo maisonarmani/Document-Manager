@@ -90,7 +90,7 @@ app_license = "MIT"
 # Hook on document methods and events
 
 doc_events = {
-    "File": {"*":"document_manager.misc.doctype.folder_structure.folder_structure.file_permission"}
+#    "File": {"*":"document_manager.misc.doctype.folder_structure.folder_structure.file_permission"}
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
