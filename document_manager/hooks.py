@@ -90,12 +90,12 @@ app_license = "MIT"
 # Hook on document methods and events
 
 doc_events = {
-    #"File": {        "before_save":"erpnext.erpnext.doctype.customer.customer.append_permission",
+    "File": {"after_insert":"document_manager.misc.doctype.folder_structure.folder_structure.file_permission"}
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-  #  }
+#}
 }
 
 # Scheduled Tasks
