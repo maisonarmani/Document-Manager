@@ -49,7 +49,7 @@ app_license = "MIT"
 # ----------
 
 # automatically create page for each record of this doctype
-# website_generators = ["File"]
+#website_generators = ["File"]
 
 
 # treeviews = ['Folder Structure']
@@ -71,7 +71,7 @@ app_license = "MIT"
 
 
 #permission_query_conditions = {
- #	"File": "document_manager.document_manager.doctype.client.client.get_permission_query_conditions_for_file",
+ 	#"File": "document_manager.document_manager.doctype.client.client.get_permission_query_conditions_for_file",
 #}
 
 #standard_portal_menu_items = [
@@ -90,12 +90,16 @@ app_license = "MIT"
 # Hook on document methods and events
 
 doc_events = {
-#    "File": {"*":"document_manager.misc.doctype.folder_structure.folder_structure.file_permission"}
+    "File": {
+        "after_save":"document_manager.client.share_file_with_customer_user"
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#}
+    },
+    "Customer": {
+        "on_update": "document_manager.client.update_all"
+    }
 }
 
 # Scheduled Tasks

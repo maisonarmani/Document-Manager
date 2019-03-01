@@ -3,9 +3,7 @@ from frappe import _
 
 
 def get_data():
-    return [
-
-        {
+    return [{
             "label": _("Setup"),
             "items": [
                 {
