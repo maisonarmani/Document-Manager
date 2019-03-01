@@ -4,24 +4,7 @@ from frappe import _
 
 def get_data():
     return [
-        {
-            "label": _("Document"),
-            "items": [
-                {
-                    "type": "doctype",
-                    "name": "Client",
-                    "description": _("Client")
-                },
-                {
-                    "type": "doctype",
-                    "name": "File",
-                    "label":"Client Documents",
-                    "description": _("Client Documents")
-                },
-            ]
-        },
-
-        {
+    {
             "label": _("Setup"),
             "items": [
                 {

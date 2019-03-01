@@ -49,7 +49,7 @@ app_license = "MIT"
 # ----------
 
 # automatically create page for each record of this doctype
-website_generators = ["File"]
+#website_generators = ["File"]
 
 
 # treeviews = ['Folder Structure']
@@ -70,13 +70,13 @@ website_generators = ["File"]
 # Permissions evaluated in scripted ways
 
 
-permission_query_conditions = {
- 	"File": "document_manager.document_manager.doctype.client.client.get_permission_query_conditions_for_file",
-}
+#permission_query_conditions = {
+ 	#"File": "document_manager.document_manager.doctype.client.client.get_permission_query_conditions_for_file",
+#}
 
-standard_portal_menu_items = [
-	{"title": _("Document Manager"), "route": "/documents", "reference_doctype": "File"}
-]
+#standard_portal_menu_items = [
+#	{"title": _("Document Manager"), "route": "/documents", "reference_doctype": "File"}
+#]
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
@@ -91,11 +91,14 @@ standard_portal_menu_items = [
 
 doc_events = {
     "File": {
-        "before_save":"document_manager.document_manager.doctype.client.client.append_permission",
+        "after_save":"document_manager.client.share_file_with_customer_user"
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
+    },
+    "Customer": {
+        "on_update": "document_manager.client.update_all"
     }
 }
 

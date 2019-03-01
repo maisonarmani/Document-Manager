@@ -11,14 +11,5 @@ def get_data():
 			"type": "module",
 			"label": _("Document Manager"),
 			"force_show":1
-		},
-		{
-			"module_name": "Client",
-			"color": "rgb(51, 34, 68)",
-			"icon": "octicon octicon-briefcase",
-			"label": _("Client"),
-			"link": "List/Client",
-			"_doctype": "Client",
-			"type": "list"
-		},
+		}
 	]
