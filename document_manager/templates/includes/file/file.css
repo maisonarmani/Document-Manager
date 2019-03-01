@@ -1,0 +1,55 @@
+.struct-wrapper, .struct{
+    margin: 0;
+    padding:0;
+}
+.struct {
+    position: relative;
+    list-style: none;
+    margin: 0.31em 0;
+}
+
+.struct * {
+    font-weight: bolder;
+    font-size: 1.02em;
+}
+
+.struct-file{
+    position: relative;
+    list-style: none;
+    margin: 0.21em 0;
+}
+.struct-file .icon{
+    width:13px;
+    height: 13px;
+    margin-right:0.4em;
+    background: url('/assets/document_manager/icons/file.svg') no-repeat center center/ 100%;
+}
+.struct-file .preview{
+    width:13px;
+    height: 13px;
+    margin-left:0.4em;
+    background: url('/assets/document_manager/icons/download.svg') no-repeat center center/ 100%;
+}
+.struct > ._ {
+    display: inline-block;
+    padding-right: 4px;
+    color: red;
+    text-decoration: none;
+    background: url('/assets/document_manager/icons/folder-closed.svg') no-repeat center center/ 100%;
+    width:13px;
+    height: 13px;
+    margin-right:0.4em;
+}
+
+
+.struct.active > a._{
+    background: url('/assets/document_manager/icons/folder-open.svg')
+}
+
+.struct.active > .struct-items {
+    display: block
+}
+
+.struct > .struct-items {
+    display: none;
+}

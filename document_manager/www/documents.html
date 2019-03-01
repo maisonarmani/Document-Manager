@@ -1,0 +1,45 @@
+{% extends "templates/web.html" %}
+{% block style %}
+	<style>
+		{% include "templates/includes/file/file.css" %}
+	</style>
+{% endblock %}
+{% block title%}
+    Document Manager
+{% endblock %}
+
+{% block page_content %}
+    <h3>File Manager</h3>
+    <div class="hidden">
+        <!-- Prefetch hack-->
+        <img src="/assets/icons/file.svg"/>
+        <img src="/assets/icons/download.svg"/>
+    </div>
+    <div class="file-section">
+            <div class='file-tree'>
+                <ul class="struct-wrapper">
+                    {%  for doc in docs %}
+                            {%  if doc.is_folder %}
+                                <li class="struct" tabindex="1">
+                                    <a  class="_" href="{{ doc.old_parent }}/{{ doc.file_name }}" ></a>
+                                    <span>{{ doc.file_name}}</span>
+                                </li>
+                                {% else %}
+                                <li class="struct-file" tabindex="1">
+                                    <span class="icon"></span>
+                                    <a href="{{ doc.file_url }}" class="preview"> download</a>
+                                </li>
+                            {%  endif %}
+
+                    {% endfor %}
+                </ul>
+
+            </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    {% include "templates/includes/file/file.js" %}
+</script>
+{% endblock %}
