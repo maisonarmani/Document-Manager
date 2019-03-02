@@ -9,7 +9,6 @@ from frappe import share,_
 
 
 def update_customer_folder_structure(customer):
-     # we the add the file manager for the client and do some
     customer_email = customer.get('email')
     if customer_email is None:
         frappe.throw("Please provide customer user for new user")
@@ -22,8 +21,6 @@ def update_customer_folder_structure(customer):
     for (key, client) in client_structure.items():
         if isinstance(client, dict):
             for (k, v) in client.items():
-                print(k)
-                print(v)
                 parent = "{0}/{1}".format(root, key)
                 folders.append({"parent": parent, "folder_name": k})
 
@@ -31,7 +28,8 @@ def update_customer_folder_structure(customer):
                     for i in v:
                         folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i})
 
-    print(folders)
+
+    frappe.errprint("folders %s" % folders)
     for folder in folders:
         create_new_folder(folder.get('folder_name'), folder.get('parent'), customer_email)
 
@@ -71,8 +69,9 @@ def get_structure(structure=None, client=None):
 def create_client_root_folder():
     # get home
     name = "{0}/{1}".format("Home","Clients")
-
-    if not frappe.db.exists({"doctype":"File", "name":name}):
+    frappe.errprint("creating root %s" % name)
+    frappe.errprint(frappe.db.sql("select name from tabFile where name = '%s'" % name))
+    if not frappe.db.exists("File", name):
         file = frappe.get_doc({
             "doctype": "File",
             "file_name": "Clients",
@@ -87,10 +86,11 @@ def create_client_root_folder():
     return  name
 
 def create_new_folder(file_name, folder, user):
-    print(file_name)
-    print(folder)
-    name = "{0}/{1}".format(file_name,folder)
-    if not frappe.db.exists({"doctype":"File", "name":name}):
+    name = "{0}/{1}".format(folder,file_name)
+    frappe.errprint("creating %s" % name)
+    frappe.errprint(frappe.db.sql("select name from tabFile where name = '%s'" % name))
+
+    if not frappe.db.exists("File", name):
         file = frappe.get_doc({
             "doctype": "File",
             "file_name": file_name,
@@ -106,6 +106,8 @@ def create_new_folder(file_name, folder, user):
 
 
 def share_file_with_customer_user(file, user, notify=0):
+
+    frappe.errprint("sharing %s with %s" % (file.name, user))
     share.add(file.doctype, file.name, user=user, read=1, write=1, share=0, everyone=0,
               flags=None, notify=notify)
 
@@ -114,6 +116,7 @@ def create_customer_user(customer):
     email = customer.email
     fullname = customer.full_name
 
+    frappe.errprint("creating customer user %s" % email)
     if email is None or frappe.db.exists("User", email):
         return
 
@@ -121,7 +124,7 @@ def create_customer_user(customer):
         "doctype": "User",
         "user_type": "System User",
         "email": email,
-        "send_welcome_email": 0,
+        "send_welcome_email": 1,
         "first_name": fullname or email.split("@")[0]
     })
     user.add_roles('File User')
@@ -133,13 +136,21 @@ def update_all(customer, trigger=""):
         create_customer_user(customer)
         update_customer_folder_structure(customer)
     except Exception as err:
-        print(err)
+        frappe.errprint(err)
 
 
 
 @frappe.whitelist()
 def append_permission(doc, trigger=""):
-    file = frappe.get_doc({"doctype":"File" , "name":doc.name})
-    docshares = share.get_users("File",file.parent)
-    print(docshares)
-    #share_file_with_customer_user(doc)
+    frappe.errprint("doc  %s" % doc.__dict__)
+    users = []
+    docshares = share.get_users("File",doc.folder)
+    frappe.errprint("docshares  %s" % docshares)
+
+    for docshare in docshares:
+        frappe.errprint("attempt to share with  %s" % docshare.user)
+        try:
+            users.index(docshare.user)
+        except ValueError:
+            users.append(docshare.user)
+            share_file_with_customer_user(doc, docshare.user, 1)

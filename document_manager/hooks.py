@@ -91,7 +91,7 @@ app_license = "MIT"
 
 doc_events = {
     "File": {
-        "after_save":"document_manager.client.share_file_with_customer_user"
+        "after_save":"document_manager.client.append_permission"
 #       "after_save": "method"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
