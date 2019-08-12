@@ -31,7 +31,6 @@ def update_customer_folder_structure(customer):
                     for i in v:
                         folders.append({"parent": "{0}/{1}".format(parent, k), "folder_name": i})
 
-    #frappe.errprint("folders %s" % folders)
     for folder in folders:
         create_new_folder(folder.get('folder_name'), folder.get('parent'), customer_email)
 
@@ -95,7 +94,6 @@ def create_client_root_folder(customer_email):
 
 def create_new_folder(file_name, folder, user):
     _name = "{0}/{1}".format(folder, file_name)
-    #frappe.errprint("creating %s" % name)
     if not frappe.db.exists("File", _name):
         file = frappe.get_doc({
             "doctype": "File",
@@ -106,9 +104,6 @@ def create_new_folder(file_name, folder, user):
 
         file.save(ignore_permissions=True)
         frappe.db.commit()
-
-    # share file with customer user
-
     if user is not None and str(user):
         share_file_with_customer_user(_name, user)
 
@@ -126,7 +121,6 @@ def check_standard_user_module(user, module):
                          "and module_name = '%s'" % (user, module))[0][0] > 0
 
 def share_file_with_customer_user(file, user, notify=0):
-    #frappe.errprint("sharing %s with %s from share_file_with_customer_user" % (file, user))
     share.add("File", file, user=user, read=1, write=0, share=0, everyone=0,
               flags=None, notify=notify)
     share_all_children(file, user)
@@ -304,9 +298,6 @@ def block_modules_for_user(user):
 
 @frappe.whitelist()
 def recursive_delete_items():
-	"""delete selected items"""
-	import json
-
 	items = sorted(json.loads(frappe.form_dict.get('items')), reverse=True)
 	doctype = frappe.form_dict.get('doctype')
 
