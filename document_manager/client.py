@@ -235,10 +235,6 @@ def add_user_icon(_doctype, user, _report=None, label=None, link=None, type='lin
         module_icon = frappe._dict()
         module_icon.color = random.choice(["#41a2a9", "#f39c12", "#528a44", "#943c3c", "#5d62ad"])
         module_icon.reverse = 0
-
-        # module_icon = frappe.get_value('Desktop Icon', {'standard': 1, 'module_name': userdefined_icon.module},
-         # ['name', 'icon', 'color', 'reverse'], as_dict=True)
-
         icon = "octicon octicon-file-directory"
         if is_sub:
             icon = "octicon octicon-file-submodule"
